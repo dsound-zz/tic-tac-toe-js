@@ -17,7 +17,10 @@ const allSame = (arr) => arr.every(qEl => qEl.innerText === arr[0].innerText && 
 const takeTurn = (index, letter) => grid()[index].innerText = letter;
 const opponentChoice = () => qNumId(emptyQs()[Math.floor(Math.random() * emptyQs().length)]);
 
-const endGame = (winningSequence) => { console.log('Game Over!', winningSequence)  };
+const endGame = (winningSequence) => {
+    winningSequence.forEach(qEl => qEl.classList.add('winner'));
+    disableListeners();  
+};
 
 const checkForVictory = () => {
     let victory = false;
@@ -26,7 +29,7 @@ const checkForVictory = () => {
         const sequence = [_grid[combo[0]], _grid[combo[1]], _grid[combo[2]]];
         if(allSame(sequence)) {
             victory = true; 
-            endGame();
+            endGame(sequence);
         }
     });
     return victory; 
@@ -36,22 +39,21 @@ const opponentTurn = () => {
     disableListeners(); 
     setTimeout(() => {
         takeTurn(opponentChoice(), 'O');
-        if(!checkForVictory());
+        if(!checkForVictory())
         enableListeners();
     }, 1000);
-    debugger
 };
 
 const clickFn = (event) => {
     takeTurn(qNumId(event.target), 'X');
-    if(!checkForVictory());
+    if(!checkForVictory())
     opponentTurn();
 };
 
 
 
-const enableListeners = () =>  grid().forEach(qEl => qEl.addEventListener('click', () => clickFn(event)));
-const disableListeners = () => grid().forEach(qEl => qEl.removeEventListener('click', () => clickFn(event)));
+const enableListeners = () =>  grid().forEach(qEl => qEl.addEventListener('click', clickFn));
+const disableListeners = () => grid().forEach(qEl => qEl.removeEventListener('click', clickFn));
 
 enableListeners();
      
